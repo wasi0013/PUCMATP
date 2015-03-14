@@ -19,6 +19,9 @@ public class Main {
 		catch(ArithmeticException e){
 			System.out.println(e);
 		}
+		catch(Exception e){
+			System.out.println(e);
+		}
 		finally{
 			System.out.println("This will always get executed");
 			
