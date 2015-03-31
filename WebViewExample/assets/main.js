@@ -2,12 +2,13 @@ var game = new Phaser.Game(500,409, Phaser.AUTO, 'gameDiv')
 var mainState = {
 
     preload: function() { 
+        
          game.stage.backgroundColor = '#65c357'
-         game.load.image('bird', 'assets/bird.png')
-         //game.load.image('bird2', 'assets/bird2.png')
-         game.load.image('pipe', 'assets/pipe.png')
-         game.load.audio('jump', 'assets/jump.wav')
-         game.load.audio('pop', 'assets/pop.wav')
+         game.load.image('bird', 'resources/bird.png')
+         //game.load.image('bird2', 'resources/bird2.png')
+         game.load.image('pipe', 'resources/pipe.png')
+         game.load.audio('jump', 'resources/jump.wav')
+         game.load.audio('pop', 'resources/pop.wav')
     },
 
     create: function() { 
@@ -28,71 +29,71 @@ var mainState = {
         
         
 
-        this.score = 0;  
+        this.score = 0
         this.labelScore = game.add.text(20, 20, "0", { font: "30px Comic Sans MS", fill: "#000000" })
         this.jumpSound = game.add.audio('jump')
         this.dieSound = game.add.audio('pop')
     },
 
     update: function() {
-        if(this.game.input.activePointer.isDown)this.jump()
-         if (this.bird.inWorld == false)
-            {
-                this.restartGame()
-            }
+        if(this.game.input.activePointer.isDown)
+        	this.jump()
+        if (this.bird.inWorld == false)
+    		this.restartGame()
+    	if (this.bird.angle < 20) 
+        	this.bird.angle += 1
         game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this)
-        if (this.bird.angle < 20)  this.bird.angle += 1
+        
     },
     jump: function() { 
-    if (this.bird.alive == false)  return;  
-         this.bird.body.velocity.y = -300;
-        game.add.tween(this.bird).to({angle: -20}, 100).start()
+    	if (this.bird.alive == false)  
+    		return;  
+        this.bird.body.velocity.y = -300
         
-        this.jumpSound.play();    
+        game.add.tween(this.bird).to({angle: -45}, 100).start()
+        
+        this.jumpSound.play()    
     },
 
     restartGame: function() {
-        game.state.start('main');
-},
-    addOnePipe: function(x, y) {  
+        game.state.start('main')
+	},
     
-    var pipe = this.pipes.getFirstDead();
-    pipe.reset(x, y);
-    pipe.body.velocity.x = -200; 
-
-    pipe.checkWorldBounds = true;
-  
-    pipe.outOfBoundsKill = true;
-},
+    addOnePipe: function(x, y) {  
+    	var pipe = this.pipes.getFirstDead()
+    	pipe.reset(x, y)
+    	pipe.body.velocity.x = -150 
+    	pipe.checkWorldBounds = true
+    	pipe.outOfBoundsKill = true
+	},
     addRowOfPipes: function() {
 
-    this.score += 1;  
-    this.labelScore.text = this.score;  
-    
-    var hole = Math.floor(Math.random() * 5) + 1
-    for (var i = 0; i < 8; i++)
-        if (i != hole && i != hole + 1) 
-            this.addOnePipe(400, i * 60 + 10);   
-},
-hitPipe: function() {  
+    	this.score += 1
+    	this.labelScore.text = this.score
+    	
+    	var hole = Math.floor(Math.random() * 5) + 1
+    	for (var i = 0; i < 8; i++)
+        	if (i != hole && i != hole + 1) 
+            	this.addOnePipe(400, i * 60 + 10);   
+	},
+	hitPipe: function() {  
   
-    if (this.bird.alive == false)
-        return;
+    	if (this.bird.alive == false)
+        	return
 
-    this.bird.alive = false;
-    this.dieSound.play()
+    	this.bird.alive = false
+    	this.dieSound.play()
 
-    game.time.events.remove(this.timer);
-    game.add.tween(this.bird).to({angle: -272}, 500).start()
+    	game.time.events.remove(this.timer)
+    	game.add.tween(this.bird).to({angle: -272}, 500).start()
 
-  this.pipes.forEachAlive(function(p){
-        p.body.velocity.x = 0;
-    }, this);
-},
+  		this.pipes.forEachAlive(function(p){
+        	p.body.velocity.x = 0
+    		}, this)
+	},
 
-};
+}
 
 
-game.state.add('main', mainState);  
-
-game.state.start('main');  
+game.state.add('main', mainState)  
+game.state.start('main')  
